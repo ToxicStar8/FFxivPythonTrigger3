@@ -1,6 +1,6 @@
 from FFxivPythonTrigger.memory import BASE_ADDR
 from FFxivPythonTrigger.text_pattern import find_signature_address, find_signature_point
-from FFxivPythonTrigger import game_language
+from FFxivPythonTrigger import game_exv
 
 sigs = {
     "actor_table": {
@@ -9,15 +9,11 @@ sigs = {
                  "e8 ? ? ? ? 48 8d ? ? ? ? ? ba ? ? ? ? e8 ? ? ? ? 89 2f",
         'add': BASE_ADDR,
     },
-    "combo_state": {
+    "combat_state": {
         'call': find_signature_point,
-        'param': "F3 0F 11 05 * * * * 48 83 C2 ?",
+        'param': "F3 0F 11 05 * * * * 48 83 C2 ?" if game_exv < (6, 1, 0) else
+        "F3 0F 11 05 * * * * 48 83 C7 ?",
         'add': BASE_ADDR,
-    },
-    "skill_queue": {
-        'call': find_signature_point,
-        'param': "F3 0F 11 05 * * * * 48 83 C2 ?",
-        'add': BASE_ADDR + 8,
     },
     "cool_down_group": {
         'call': find_signature_point,
@@ -56,7 +52,7 @@ sigs = {
     },
     "skill_animation_lock": {
         'call': find_signature_point,
-        'param': "F3 0F ? ? * * * * 41 F6 47 20",
+        'param': "F3 0F 10 05 * * * * 0F 2F C6 76 ? 48 8B 45 ?",
         'add': BASE_ADDR,
     },
     "movement": {
@@ -200,6 +196,11 @@ sigs = {
     'fate_manager': {
         'call': find_signature_point,
         'param': '48 8B 15 * * * * 48 8B F9 44 0F B7 41',
+        'add': BASE_ADDR,
+    },
+    "count_down_set": {
+        'call': find_signature_point,
+        'param': "E8 * * * * 48 8B CB E8 ? ? ? ? 83 7B ? ? 74 ? 48 8B 4B ? 48 8B 01 FF 90 ? ? ? ?",
         'add': BASE_ADDR,
     },
 }

@@ -2,15 +2,14 @@ import math
 from ctypes import *
 from typing import Dict, Set, Iterator, Tuple, Optional, TYPE_CHECKING
 
-from FFxivPythonTrigger import game_ext
+from FFxivPythonTrigger import game_ext, game_exv
 from FFxivPythonTrigger.memory.struct_factory import OffsetStruct
-from FFxivPythonTrigger.popular_struct import Position,Vector3
+from FFxivPythonTrigger.popular_struct import Position, Vector3
 
 from FFxivPythonTrigger.utils.shape import circle
 from .enum import Jobs, ActorType
 
 ACTOR_TABLE_SIZE = 424
-
 
 
 class Effect(OffsetStruct({
@@ -82,52 +81,7 @@ class CastInfo(OffsetStruct({
     used_action_type: int
 
 
-if game_ext == 3:
-    _actor_struct = {
-        '_name': (c_char * 68, 0x30),
-        'id': (c_uint, 0x74),
-        'b_npc_id': (c_uint, 0x78),
-        'e_npc_id': (c_uint, 0x80),
-        'owner_id': (c_uint, 0x84),
-        'type': (ActorType, 0x8c),
-        'sub_type': (ActorType, 0x8d),
-        'is_friendly': (c_ubyte, 0x8e),
-        'effective_distance_x': (c_ubyte, 0x90),
-        'player_target_status': (c_ubyte, 0x91),
-        'effective_distance_y': (c_ubyte, 0x92),
-        '_unit_status_1': (c_ubyte, 0x94),
-        'pos': (Position, 0xa0),
-        'hitbox_radius': (c_float, 0xc0),
-        '_unit_status_2': (c_uint, 0x104),
-        'current_hp': (c_uint, 0x1c4),
-        'max_hp': (c_uint, 0x1c8),
-        'current_mp': (c_uint, 0x1cc),
-        'max_mp': (c_uint, 0x1d0),
-        'current_gp': (c_ushort, 0x1d4),
-        'max_gp': (c_ushort, 0x1d6),
-        'current_cp': (c_ushort, 0x1d8),
-        'max_cp': (c_ushort, 0x1da),
-        'job': (Jobs, 0x1e2),
-        'level': (c_ubyte, 0x1e3),
-        'pc_target_id': (c_uint, 0x1f0),
-        'pc_target_id_2': (c_uint, 0x230),
-        'mount_id': (c_uint, 0xEC8),
-        'npc_target_id': (c_uint, 0x1818),
-        'b_npc_target_id': (c_uint, 0x18d8),
-        'current_world': (c_ushort, 0x195c),
-        'home_world': (c_ushort, 0x195e),
-        'shield_percent': (c_ubyte, 0x1997),
-        '_status_flags': (c_ubyte, 0x19a0),
-        '_status_flags_2': (c_ubyte, 0x19a5),
-        'effects': (Effects, 0x19f8),
-        'cast_info': (CastInfo, 0x1b80),
-        # 'is_casting_2': (c_bool, 0x1b82),
-        # 'casting_id': (c_uint, 0x1b84),
-        # 'casting_target_id': (c_uint, 0x1b90),
-        # 'casting_progress': (c_float, 0x1bb4),
-        # 'casting_time': (c_float, 0x1bb8),
-    }
-else:
+if game_exv < (6, 1, 0):
     _actor_struct = {
         '_name': (c_char * 68, 0x30),
         'id': (c_uint, 0x74),
@@ -159,14 +113,62 @@ else:
         'mount_id': (c_ushort, 0xC38),
         'npc_target_id': (c_uint, 0x1818),
         'omen_ptr': (c_ulonglong, 0x1870),
-        'b_npc_target_id': (c_uint, 0x18d8),
+        'b_npc_target_id': (c_uint, 0x1940),
+        'b_npc_base': (c_ushort, 0x1998),
         'current_world': (c_ushort, 0x19b4),
         'home_world': (c_ushort, 0x19b6),
-        'shield_percent': (c_ubyte, 0x1997),
+        'shield_percent': (c_ubyte, 0x19D9),
         '_status_flags': (c_ubyte, 0x19DF),
-        '_status_flags_2': (c_ubyte, 0x19E4),
+        '_status_flags_2': (c_ubyte, 0x19E3),
         'effects': (Effects, 0x1A38),
         'cast_info': (CastInfo, 0x1bc0),
+        # 'is_casting_2': (c_bool, 0x1bc2),
+        # 'casting_id': (c_uint, 0x1bc4),
+        # 'casting_target_id': (c_uint, 0x1bd0),
+        # 'casting_progress': (c_float, 0x1bf4),
+        # 'casting_time': (c_float, 0x1bf8),
+    }
+else:
+    _actor_struct = {
+        '_name': (c_char * 68, 0x30),
+        'id': (c_uint, 0x74),
+        'b_npc_id': (c_uint, 0x78),
+        'e_npc_id': (c_uint, 0x80),
+        'owner_id': (c_uint, 0x84),
+        'type': (ActorType, 0x8c),
+        'sub_type': (c_ubyte, 0x8d),
+        'is_friendly': (c_ubyte, 0x8e),
+        'effective_distance_x': (c_ubyte, 0x90),
+        'player_target_status': (c_ubyte, 0x91),
+        'effective_distance_y': (c_ubyte, 0x92),
+        '_unit_status_1': (c_ubyte, 0x94),
+        'pos': (Position, 0xa0),
+        'hitbox_radius': (c_float, 0xc0),
+        '_unit_status_2': (c_uint, 0x104),
+        'current_hp': (c_uint, 0x1c4),
+        'max_hp': (c_uint, 0x1c8),
+        'current_mp': (c_uint, 0x1cc),
+        'max_mp': (c_uint, 0x1d0),
+        'current_gp': (c_ushort, 0x1d4),
+        'max_gp': (c_ushort, 0x1d6),
+        'current_cp': (c_ushort, 0x1d8),
+        'max_cp': (c_ushort, 0x1da),
+        'job': (Jobs, 0x1e0),
+        'level': (c_ubyte, 0x1e1),
+        'pc_target_id': (c_uint, 0x1f0),
+        'pc_target_id_2': (c_uint, 0xc50),
+        'mount_id': (c_ushort, 0x658),
+        'npc_target_id': (c_uint, 0x1818),
+        # 'omen_ptr': (c_ulonglong, 0x1870),
+        'b_npc_target_id': (c_uint, 0x1940),
+        'b_npc_base': (c_ushort, 0x1A94),
+        'current_world': (c_ushort, 0x1ab0),
+        'home_world': (c_ushort, 0x1ab2),
+        'shield_percent': (c_ubyte, 0x19D9),
+        '_status_flags': (c_ubyte, 0x1AD6),
+        '_status_flags_2': (c_ubyte, 0x1ADA),
+        'effects': (Effects, 0x1b28),
+        'cast_info': (CastInfo, 0x1cb0),
         # 'is_casting_2': (c_bool, 0x1bc2),
         # 'casting_id': (c_uint, 0x1bc4),
         # 'casting_target_id': (c_uint, 0x1bd0),
@@ -217,8 +219,9 @@ class Actor(OffsetStruct(_actor_struct)):
     # casting_target_id: int
     # casting_progress: float
     # casting_time: float
-    cast_info:CastInfo
+    cast_info: CastInfo
     mount_id: int
+    b_npc_base: int
 
     def __hash__(self):
         return self.id | self.b_npc_id
@@ -290,9 +293,23 @@ class Actor(OffsetStruct(_actor_struct)):
     def is_casting(self):
         return bool(self._status_flags & 0x10000000)
 
+    if game_exv < (6, 1, 0):
+        @property
+        def is_positional(self):
+            return not bool(cast(byref(self), POINTER(c_ubyte))[0x19e3] & 0x80)
+    else:
+        @property
+        def is_positional(self):
+            return not bool(cast(byref(self), POINTER(c_ubyte))[0x1ada] & 0xf)  # TODO: check if this is correct
+
     @property
-    def is_positional(self):
-        return not bool(self._status_flags_2 & 0x1)
+    def target_id(self):
+        if self.type == 1:
+            return self.pc_target_id_2
+        elif self.type == 2:
+            return self.b_npc_target_id
+        else:
+            return self.npc_target_id
 
 
 class ActorTable(POINTER(Actor) * ACTOR_TABLE_SIZE):
@@ -303,7 +320,10 @@ class ActorTable(POINTER(Actor) * ACTOR_TABLE_SIZE):
         return self.get_actor(0)
 
     def get_actor(self, idx: int) -> Optional[Actor]:
-        return self[idx][0] if self[idx] else None
+        try:
+            return self[idx][0]
+        except:
+            return None
 
     def __iter__(self) -> Iterator[Actor]:
         for i in range(ACTOR_TABLE_SIZE):

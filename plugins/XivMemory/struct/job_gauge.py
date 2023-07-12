@@ -279,9 +279,17 @@ class PuglistGauge(OffsetStruct({
 
 
 class MonkGauge(OffsetStruct({
-    'chakra_stacks': (c_ushort, 0),
+    'chakra_stacks': (c_ubyte, 0),
+    'BeastChakra1': (c_ubyte, 1),
+    'BeastChakra2': (c_ubyte, 2),
+    'BeastChakra3': (c_ubyte, 3),
+    'Nadi': (c_ubyte, 4)
 }, 16)):
     chakra_stacks: int
+    BeastChakra1: int
+    BeastChakra2: int
+    BeastChakra3: int
+    Nadi: int
 
 
 class MachinistGauge(OffsetStruct({
@@ -370,7 +378,7 @@ gauges = {
     'Bard': BardGauge,  # 吟游诗人BRD
     'WhiteMage': WhiteMageGauge,  # 白魔法师WHM
     'BlackMage': BlackMageGauge,  # 黑魔法师BLM
-    'Arcanist': ArcanistGauge,  # 秘术师ACN
+    'Arcanist': SummonerGauge,  # 秘术师ACN
     'Summoner': SummonerGauge,  # 召唤师SMN
     'Scholar': ScholarGauge,  # 学者SCH
     'Ninja': NinjaGauge,  # 忍者NIN
@@ -381,5 +389,6 @@ gauges = {
     'RedMage': RedMageGauge,  # 赤魔法师RDM
     'Gunbreaker': GunbreakerGauge,  # 绝枪战士GNB
     'Dancer': DancerGauge,  # 舞者DNC
-    'Reaper': ReaperGauge,  # 舞者DNC
+    'Reaper': ReaperGauge,  # 镰刀RPR
+    # 'Sage': None,  # 贤者SGE
 }

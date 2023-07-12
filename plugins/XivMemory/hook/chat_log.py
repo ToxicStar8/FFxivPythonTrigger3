@@ -8,8 +8,7 @@ from FFxivPythonTrigger import EventBase, process_event
 from FFxivPythonTrigger.hook import PluginHook
 from FFxivPythonTrigger.game_utils.std_string import StdString
 from FFxivPythonTrigger.saint_coinach import item_names, realm
-
-from ..se_string import ChatLog, get_message_chain
+from FFxivPythonTrigger.game_utils.se_string import ChatLog, get_message_chain
 
 event_item_names = {row.key: row['Singular'] for row in realm.game_data.get_sheet('EventItem')}
 
@@ -21,8 +20,8 @@ class ChatLogEvent(EventBase):
     def __init__(self, chat_log: ChatLog):
         self.time = datetime.fromtimestamp(chat_log.timestamp)
         self.channel_id = chat_log.channel_id
-        self.player = chat_log.sender_text
-        self.message = chat_log.messages_text
+        self.player: str = chat_log.sender_text
+        self.message: str = chat_log.messages_text
         self.chat_log = chat_log
 
     @cache

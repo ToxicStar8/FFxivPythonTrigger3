@@ -1,6 +1,8 @@
 from ctypes import *
 from typing import Union
 
+from FFxivPythonTrigger import frame_inject
+
 head_marking_interface = CFUNCTYPE(c_ubyte, c_int64, c_ubyte, c_uint)
 
 head_marking_names = ['attack1', 'attack2', 'attack3', 'attack4', 'attack5',
@@ -28,4 +30,4 @@ class HeadMark(object):
         '', 'attack1', 'attack2', 'attack3', 'attack4', 'attack5', 'bind1',
         'bind2', 'bind3', 'stop1', 'stop2', 'square','circle', 'cross', 'triangle'
         """
-        return self.original(mark_type, target_actor_id)
+        return frame_inject.register_once_call(self.original, mark_type, target_actor_id)

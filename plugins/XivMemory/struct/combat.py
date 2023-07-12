@@ -16,6 +16,36 @@ class ComboState(OffsetStruct({
     action_id: int
 
 
+class SkillQueue(OffsetStruct({
+    'mark1': (c_ulong, 0),
+    'mark2': (c_ulong, 4),
+    'ability_id': (c_ulong, 8),
+    'target_id': (c_ulong, 16),
+})):
+    mark1: int
+    mark2: int
+    ability_id: int
+    target_id: int
+
+    @property
+    def has_skill(self):
+        return bool(self.ability_id)
+
+    def use_skill(self, skill_id, target_id=0xe0000000):
+        self.target_id = target_id
+        self.ability_id = skill_id
+        self.mark1 = 1
+        self.mark2 = 1
+
+
+class CombatState(OffsetStruct({
+    'combo_state': ComboState,
+    'skill_queue': SkillQueue,
+})):
+    combo_state: ComboState
+    skill_queue: SkillQueue
+
+
 class CoolDownGroup(OffsetStruct({
     'duration': (c_float, 8),
     'total': (c_float, 12),
@@ -56,28 +86,6 @@ class Enemy(OffsetStruct({
     can_select: int
     hp_percent: int
     enmity_percent: int
-
-
-class SkillQueue(OffsetStruct({
-    'mark1': (c_ulong, 0),
-    'mark2': (c_ulong, 4),
-    'ability_id': (c_ulong, 8),
-    'target_id': (c_ulong, 16),
-})):
-    mark1: int
-    mark2: int
-    ability_id: int
-    target_id: int
-
-    @property
-    def has_skill(self):
-        return bool(self.ability_id)
-
-    def use_skill(self, skill_id, target_id=0xe0000000):
-        self.target_id = target_id
-        self.ability_id = skill_id
-        self.mark1 = 1
-        self.mark2 = 1
 
 
 class Enemies(Enemy * 8):

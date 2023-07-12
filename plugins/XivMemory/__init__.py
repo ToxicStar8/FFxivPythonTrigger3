@@ -6,11 +6,11 @@ from FFxivPythonTrigger.address_manager import AddressManager
 from FFxivPythonTrigger.decorator import event
 from FFxivPythonTrigger.exceptions import NeedRequirementError, PluginNotFoundException
 from FFxivPythonTrigger.memory import read_memory, read_uint, read_float, write_float
-from FFxivPythonTrigger.memory.struct_factory import PointerStruct, OffsetStruct
+from FFxivPythonTrigger.memory.struct_factory import PointerStruct
 
 from .sigs import sigs, enemies_shifts, mission_info_shifts
 from .struct.actor import ActorTable, Actor
-from .struct.combat import ComboState, SkillQueue, CoolDownGroups, Enemies, MissionInfo, PvpAction
+from .struct.combat import CombatState, CoolDownGroups, Enemies, MissionInfo, PvpAction
 from .struct.inventory import InventoryPagePtr, InventoryPage
 from .struct.job_gauge import gauges
 from .struct.markings import Markings
@@ -20,9 +20,9 @@ from .struct.player_info import Player
 from .struct.coordinate import Coordinate
 from .struct.buddy import Buddy
 from .struct.fate import FateManager
-from .hook import ValueBindHook
 from .hook.mo_ui_entity import MoUiEntityHook
 from .hook.chat_log import ChatLogHook, PrintChatLogHook
+from .hook.count_down_hook import CountDownHook
 from .calls.do_action import DoAction, DoActionLocation
 from .calls.do_text_command import DoTextCommand
 from .calls.head_mark import HeadMark
@@ -40,8 +40,7 @@ except ModuleNotFoundError:
 class XivMemory(PluginBase):
     name = "XivMemory"
     actor_table: ActorTable
-    combo_state: ComboState
-    skill_queue: SkillQueue
+    combat_state: CombatState
     cool_down_group: CoolDownGroups
     player_info: Player
     targets: Target
@@ -59,8 +58,7 @@ class XivMemory(PluginBase):
         self._address = AddressManager(self.name, self.logger).load(sigs)
         self.actor_table = read_memory(ActorTable, self._address['actor_table'])
         self.actor_table._aid_to_idx_cache = {}
-        self.combo_state = read_memory(ComboState, self._address['combo_state'])
-        self.skill_queue = read_memory(SkillQueue, self._address['skill_queue'])
+        self.combat_state = read_memory(CombatState, self._address['combat_state'])
         self.cool_down_group = read_memory(CoolDownGroups, self._address['cool_down_group'])
         self._enemies = read_memory(PointerStruct(Enemies, *enemies_shifts), self._address["enemies_base"])
         self._gauges = {k: read_memory(v, self._address['gauge']) for k, v in gauges.items()}
@@ -78,6 +76,7 @@ class XivMemory(PluginBase):
         self.value_bind_hooks = {
             # 'world_id': WorldIdHook(self, self._address["world_id_hook"]),
             'mo_ui_entity': MoUiEntityHook(self, self._address["mo_ui_entity_hook"]),
+            'count_down': CountDownHook(self, self._address["count_down_set"]),
         }
         self.hooks = {
             # 'chat_log': ChatLogHook(self, self._address["chat_log_hook"]),
@@ -97,6 +96,14 @@ class XivMemory(PluginBase):
         })
         self.utils = Utils(self)
         self.register_http_api_route()
+
+    @property
+    def combo_state(self):
+        return self.combat_state.combo_state
+
+    @property
+    def skill_queue(self):
+        return self.combat_state.skill_queue
 
     @property
     def mission_info(self) -> MissionInfo:
