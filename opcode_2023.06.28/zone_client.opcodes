@@ -1,0 +1,10 @@
+key,2023.06.28
+ActionRequest,374
+ActionRequestGroundTargeted,2B5
+ChatHandler,326
+ClientTrigger ,325
+InventoryModifyHandler,29A
+MarketBoardPurchaseHandler,17A
+SetSearchInfoHandler,19D
+UpdatePositionHandler,315
+UpdatePositionInstance,320

@@ -85,8 +85,11 @@ def unpack_message(data: bytearray) -> unpacked_messages:
         raw_messages = data[BundleHeader.struct_size:bundle_header.length]
     elif bundle_header.encoding == 0x0101 or bundle_header.encoding == 0x0100:
         raw_messages = bytearray(decompress(data[BundleHeader.struct_size + 2:bundle_header.length], wbits=-MAX_WBITS))
+    elif bundle_header.encoding == 0x0200 or bundle_header.encoding == 0x0201:
+        #raw_messages = bytearray(decompress(data[BundleHeader.struct_size + 4:bundle_header.length], wbits=-MAX_WBITS))
+        _logger(f"收到={data}")
     else:
-        raise UnpackError(f"unknown encoding type:{bundle_header.encoding:#x}")
+        raise UnpackError(f"unknown encoding type:{bundle_header.encoding:#x},data:{data}")
     messages = []
     msg_offset = 0
     for i in range(bundle_header.msg_count):
@@ -108,6 +111,9 @@ def pack_message(bundle_header: BundleHeader, messages: Iterable[bytearray]) -> 
         compress_messages = raw_message
     elif bundle_header.encoding == 0x0101 or bundle_header.encoding == 0x0100:
         compress_messages = compress(raw_message)
+    elif bundle_header.encoding == 0x0200 or bundle_header.encoding == 0x0201:
+        #compress_messages = compress(raw_message)
+        _logger(f"发出={compress_messages}")
     else:
         raise PackError(f"unknown encoding type:{bundle_header.encoding:#x}")
 
