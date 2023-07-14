@@ -58,17 +58,13 @@ class XivMemory(PluginBase):
         self._address = AddressManager(self.name, self.logger).load(sigs)
         self.actor_table = read_memory(ActorTable, self._address['actor_table'])
         self.actor_table._aid_to_idx_cache = {}
-        self.combat_state = read_memory(CombatState, self._address['combat_state'])
         self.cool_down_group = read_memory(CoolDownGroups, self._address['cool_down_group'])
         self._enemies = read_memory(PointerStruct(Enemies, *enemies_shifts), self._address["enemies_base"])
-        self._gauges = {k: read_memory(v, self._address['gauge']) for k, v in gauges.items()}
         self.player_info = read_memory(Player, self._address['player_info'])
         self.targets = read_memory(Target, self._address['targets'])
         self.movement = read_memory(Movement, self._address['movement'])
         self.inventory = read_memory(InventoryPagePtr, self._address['inventory'])
         self.party = read_memory(PartyList, self._address['party'])
-        self._mission_info = read_memory(POINTER(MissionInfo), self._address['mission_info'])
-        self.pvp_action = read_memory(PvpAction, self._address['pvp_action'])
         self.markings = read_memory(Markings, self._address['markings'])
         self.buddy = read_memory(Buddy, self._address['buddy_list'])
         self._fate = read_memory(POINTER(FateManager), self._address['fate_manager'])
@@ -91,7 +87,6 @@ class XivMemory(PluginBase):
             'way_mark': WayMark(self._address['way_mark_set'], self._address['way_mark_clear'],
                                 self._address['way_mark_clear_all'],
                                 self._address['marking_controller'], self._address['action_manager']),
-            'is_quest_finished': IsQuestFinished(self._address['is_quest_finished'], self._address['quest_manager']),
             'ray_cast': RayCast(self._address['screen_to_world'], self._address['get_camera_matrix']),
         })
         self.utils = Utils(self)

@@ -11,9 +11,6 @@ class Coordinate(object):
             PointerStruct(Position, *main_coordinate_shifts),
             address["coordinate_main_pointer"]
         )
-        self.coordinate_fly = read_memory(
-            Position, address["coordinate_fly"]
-        )
 
     def __str__(self):
         return str(self.coordinate_main)
