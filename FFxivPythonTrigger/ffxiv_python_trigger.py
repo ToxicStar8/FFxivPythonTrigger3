@@ -684,7 +684,8 @@ _server_mission = Mission('server', -1, _server.serve_forever)
 game_base_dir: Path = Path(PROCESS_FILENAME).parent.parent
 if (game_base_dir / "FFXIVBoot.exe").exists() or (game_base_dir / "rail_files" / "rail_game_identify.json").exists():
     game_language = "chs"
-    game_ext = 3
+    game_exv = (6, 0, 1)
 else:
     game_language = _storage.data.setdefault('inter_lang', "en")
-    game_ext = 4
+    game_exv = (6, 1, 0)
+game_ext = game_exv[0] - 2

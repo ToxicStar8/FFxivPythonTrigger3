@@ -4,6 +4,7 @@ from threading import Lock
 from traceback import format_exc
 from typing import Iterable, Tuple, List, Optional
 from zlib import decompress, MAX_WBITS, compress
+import zlib
 
 from FFxivPythonTrigger.logger import Logger
 from .base_struct import BundleHeader, MessageHeader
@@ -80,16 +81,19 @@ class PackError(Exception): pass
 
 
 def unpack_message(data: bytearray) -> unpacked_messages:
+    _logger(f"data={data}")
     bundle_header = BundleHeader.from_buffer(data)
     if bundle_header.encoding == 0x0000 or bundle_header.encoding == 0x0001:
         raw_messages = data[BundleHeader.struct_size:bundle_header.length]
+        _logger(f"收到0={raw_messages}")
     elif bundle_header.encoding == 0x0101 or bundle_header.encoding == 0x0100:
         raw_messages = bytearray(decompress(data[BundleHeader.struct_size + 2:bundle_header.length], wbits=-MAX_WBITS))
+        _logger(f"收到64={raw_messages}")
     elif bundle_header.encoding == 0x0200 or bundle_header.encoding == 0x0201:
-        #raw_messages = bytearray(decompress(data[BundleHeader.struct_size + 4:bundle_header.length], wbits=-MAX_WBITS))
-        _logger(f"收到={data}")
+        raw_messages = bytearray(decompress(data[BundleHeader.struct_size + 2:bundle_header.length], wbits=-MAX_WBITS))
+        _logger(f"收到128={raw_messages}")
     else:
-        raise UnpackError(f"unknown encoding type:{bundle_header.encoding:#x},data:{data}")
+        raise UnpackError(f"unknown encoding type:{bundle_header.encoding:#x}")
     messages = []
     msg_offset = 0
     for i in range(bundle_header.msg_count):
@@ -109,12 +113,15 @@ def pack_message(bundle_header: BundleHeader, messages: Iterable[bytearray]) -> 
     if not cnt: return raw_message
     if bundle_header.encoding == 0x0000 or bundle_header.encoding == 0x0001:
         compress_messages = raw_message
+        _logger(f"发出0={compress_messages}")
     elif bundle_header.encoding == 0x0101 or bundle_header.encoding == 0x0100:
         compress_messages = compress(raw_message)
+        _logger(f"发出64={compress_messages}")
     elif bundle_header.encoding == 0x0200 or bundle_header.encoding == 0x0201:
-        #compress_messages = compress(raw_message)
-        _logger(f"发出={compress_messages}")
+        compress_messages = compress(raw_message)
+        _logger(f"发出128={compress_messages}")
     else:
+        #_logger(f"{compress_messages}")
         raise PackError(f"unknown encoding type:{bundle_header.encoding:#x}")
 
     bundle_header.msg_count = cnt

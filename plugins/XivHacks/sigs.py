@@ -19,6 +19,11 @@ sigs = {
         'param': "E8 * * * * 8B D0 48 8B CE E8 ? ? ? ? 49 8B D7",
         'add': BASE_ADDR,
     },
+    "skill_animation_lock_local": {
+        'call': find_signature_address,
+        'param': "41 C7 45 08 ? ? ? ? EB ? 41 C7 45 08",
+        'add': BASE_ADDR,
+    },
     "speed_main": {
         'call': find_signature_point,
         'param': "E8 * * * * 44 0F 28 D8 E9 ? ? ? ?",

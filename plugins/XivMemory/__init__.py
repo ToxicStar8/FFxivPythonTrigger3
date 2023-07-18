@@ -67,7 +67,6 @@ class XivMemory(PluginBase):
         self.party = read_memory(PartyList, self._address['party'])
         self.markings = read_memory(Markings, self._address['markings'])
         self.buddy = read_memory(Buddy, self._address['buddy_list'])
-        self._fate = read_memory(POINTER(FateManager), self._address['fate_manager'])
         self.coordinate = Coordinate(self._address)
         self.value_bind_hooks = {
             # 'world_id': WorldIdHook(self, self._address["world_id_hook"]),

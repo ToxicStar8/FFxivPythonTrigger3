@@ -53,7 +53,7 @@ if not args.skip_requirement_check:
         require_reload = True
 
     if not requirements_controller.test_requirements(["Shapely"]):
-        requirements_controller.sub_process_install(".\\res\\Shapely-1.8.0-cp310-cp310-win_amd64.whl")
+        requirements_controller.sub_process_install(".\\res\\Shapely-1.8.2-cp311-cp311-win_amd64.whl")
         if not requirements_controller.test_requirements(["Shapely"]):
             e_print("cant install Shapely")
             exit(1)

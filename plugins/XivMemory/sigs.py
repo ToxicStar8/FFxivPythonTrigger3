@@ -162,11 +162,6 @@ sigs = {
             'unique': False,
         }
     },
-    'fate_manager': {
-        'call': find_signature_point,
-        'param': '48 8B 15 * * * * 48 8B F9 44 0F B7 41',
-        'add': BASE_ADDR,
-    },
     "count_down_set": {
         'call': find_signature_point,
         'param': "E8 * * * * 48 8B CB E8 ? ? ? ? 83 7B ? ? 74 ? 48 8B 4B ? 48 8B 01 FF 90 ? ? ? ?",

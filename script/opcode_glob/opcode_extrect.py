@@ -2,9 +2,9 @@ from pathlib import Path
 
 import requests
 
-url = r"https://raw.githubusercontent.com/karashiiro/FFXIVOpcodes/master/opcodes.json"
+url = r"https://raw.githubusercontent.com/gamous/FFXIVNetworkOpcodes/main/output/CN_2023.06.28/opcodes.json"
 idx = {
-    "6.05": "2022.01.25.0000.0000",
+    "2023.06.28",
 }
 outputs = {
     'ServerZoneIpc': 'zone_server.opcodes',
@@ -22,9 +22,10 @@ translate = {
     "ActionEffect8": "AoeEffect8",
     "ActionEffect": "Effect",
 }
-for data in requests.get(url).json():
-    if data['version'] in idx and data['region'] == 'Global':
-        version, version_key = data['version'], idx[data['version']]
+
+data = requests.get(url).json()
+if data['version'] in idx and data['region'] == 'CN':
+        version_key = data['version']
         path = Path(f"opcode_{version_key}")
         path.mkdir(exist_ok=True)
         c_data = dict()

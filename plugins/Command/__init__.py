@@ -116,7 +116,8 @@ class CommandPlugin(PluginBase):
         self.commands = dict()
         self.register(self, '@fpt', self.fpt_commands)
         self.cmd_catch_hook(self, AddressManager(self.name, self.logger).
-                            scan_address('catch_cmd', "40 55 53 57 41 54 41 56 41 57 48 8D 6C 24 ?"))
+                            scan_address('catch_cmd', "40 55 53 57 41 54 41 56 41 57 48 8D 6C 24 ? 48 81 EC ? ? ? ? "
+                                                      "48 8B 05 ? ? ? ? 48 33 C4 48 89 45 ? 65 48 8B 04 25 ? ? ? ?"))
 
         class Script:
             def __init__(_self, script_name, argus):

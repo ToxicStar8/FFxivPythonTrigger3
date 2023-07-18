@@ -18,7 +18,7 @@ csv_names = [
 ]
 
 
-def load_opcodes() -> List[Dict[str, int]]:
+def load_opcodes(path) -> List[Dict[str, int]]:
     _logger("加载opcodes")
     data = []   
     _path = Path(f"E:/F3/opcode_2023.06.28/zone_client.opcodes")
@@ -47,8 +47,8 @@ def load_opcodes() -> List[Dict[str, int]]:
 
 user_path = get_module_storage("XivNetworkOpcodes").path
 user_path.mkdir(exist_ok=True)
-source_data = load_opcodes()
-user_data = load_opcodes()
+source_data = load_opcodes(Path(__file__).parent)
+user_data = load_opcodes(user_path / game_version)
 # key_to_code = [{} for i in range(6)]
-key_to_code = load_opcodes()
+key_to_code = [source_data[i] | user_data[i] for i in range(6)]
 code_to_key = [{v: k for k, v in opcodes.items()} for opcodes in key_to_code]
